@@ -57,7 +57,8 @@ def get_mtcars_server_functions(input, output, session):
     # First, declare shared reactive values (used between functions) up front
     # Initialize the values on startup
 
-    reactive_location = reactive.Value("ELY MN")
+    reactive_location = reactive.Value("Maryville MO")
+    reactive_stock = reactive.Value("Ford Motor Company")
 
     # Previously, we had a single reactive dataframe to hold filtered results
     reactive_df = reactive.Value()
@@ -200,6 +201,59 @@ def get_mtcars_server_functions(input, output, session):
 
     ###############################################################
 
+    @reactive.Effect
+    @reactive.event(input.MTCARS_STOCK_SELECT)
+    def _():
+        """Set two reactive values (the location and temps df) when user changes location"""
+        reactive_stock.set(input.MTCARS_STOCK_SELECT())
+        #init_mtcars_temps_csv()
+        df = get_mtcars_stock_df()
+        logger.info(f"init reactive_stock_df len: {len(df)}")
+
+    @reactive.file_reader(str(csv_stocks))
+    def get_mtcars_stock_df():
+        """Return mtcars stocks pandas Dataframe."""
+        logger.info(f"READING df from {csv_stocks}")
+        df = pd.read_csv(csv_stocks)
+        logger.info(f"READING df len {len(df)}")
+        return df
+    
+    @output
+    @render.text
+    def mtcars_stock_string():
+        """Return a string based on selected location."""
+        logger.info("mtcars_stock_string starting")
+        selected = reactive_stock.get()
+        line1 = f"Recent Stock for {selected}."
+        line2 = "Updated once per minute for 15 minutes."
+        line3 = "Keeps the most recent 10 minutes of data."
+        message = f"{line1}\n{line2}\n{line3}"
+        logger.info(f"{message}")
+        return message
+
+    @output
+    @render.table
+    def mtcars_stock_table():
+        df = get_mtcars_stock_df()
+        # Filter the data based on the selected location
+        df_stock = df[df["Company"] == reactive_stock.get()]
+        logger.info(f"Rendering Stock table with {len(df_stock)} rows")
+        return df_stock
+    
+    @output
+    @render_widget
+    def mtcars_stock_chart():
+        df = get_mtcars_stock_df()
+        # Filter the data based on the selected location
+        df_stock = df[df["Company"] == reactive_stock.get()]
+        logger.info(f"Rendering Stock chart with {len(df_stock)} points")
+        plotly_express_plot2 = px.line(
+            df_stock, x="Time", y="Price", color="Company", markers=True
+        )
+        plotly_express_plot2.update_layout(title="Continuous Stock")
+        return plotly_express_plot2
+
+
     # return a list of function names for use in reactive outputs
     # Includes our 2 new selection strings and 2 new output widgets
 
@@ -212,6 +266,10 @@ def get_mtcars_server_functions(input, output, session):
         mtcars_location_string,
         mtcars_location_table,
         mtcars_location_chart,
+        mtcars_stock_string,
+        mtcars_stock_table,
+        mtcars_stock_chart,
+        
     ]
 
 
