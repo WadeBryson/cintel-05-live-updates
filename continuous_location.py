@@ -94,7 +94,7 @@ def init_csv_file(file_path):
     df_empty.to_csv(file_path, index=False)
 
 
-async def update_csv_location():
+async def update_csv_location():  
     """Update the CSV file with the latest location information."""
     logger.info("Calling update_csv_location")
     try:

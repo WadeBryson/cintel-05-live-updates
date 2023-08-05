@@ -30,12 +30,12 @@ logger, logname = setup_logger(__file__)
 # Define a function that will run continuously to update our data.
 # We update to a local file, but we could also update to a database.
 # Or a cloud service. Or a data lake. Or a data warehouse.
-async def update_csv_files():
+async def update_csv_files():    #async
     while True:
         logger.info("Calling continuous updates ...")
         task1 = asyncio.create_task(update_csv_location())
-        await asyncio.gather(task1)
-        await asyncio.sleep(60)  # wait for 60 seconds
+        await asyncio.gather(task1)    #await
+        await asyncio.sleep(60)  # await & wait for 60 seconds
 
 app_ui = ui.page_navbar(
     shinyswatch.theme.darkly(),
