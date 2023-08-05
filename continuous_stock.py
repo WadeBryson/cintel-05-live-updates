@@ -48,7 +48,7 @@ def init_csv_file(file_path):
 
 
 # Writes new stock info to CSV
-def update_csv_stock():
+async def update_csv_stock():
     logger.info("Calling update_csv_stock")
     try:
         companies = [
@@ -97,7 +97,7 @@ def update_csv_stock():
             logger.info(f"Saving prices to {fp}")
 
             # Wait for update_interval seconds before the next reading
-            asyncio.sleep(update_interval)  #await
+            await asyncio.sleep(update_interval)  #await
 
     except Exception as e:
         logger.error(f"ERROR in update_csv_stock: {e}")
