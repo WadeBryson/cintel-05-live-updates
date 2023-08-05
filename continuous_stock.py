@@ -17,7 +17,7 @@ from util_logger import setup_logger
 # Set up logger
 logger, log_filename = setup_logger(__file__)
 
-# Takes company name string and returns stock ticker string
+
 def lookup_ticker(company):
     stocks_dictionary = {
         "Tesla Inc": "TSLA",
@@ -30,11 +30,11 @@ def lookup_ticker(company):
     return ticker
 
 
-# Takes ticker string and returns current stock price (asynchronous)
-async def get_stock_price(ticker: str):
+
+def get_stock_price(ticker):
     logger.info("Calling get_stock_price for {ticker}")
-    # stock_url = f"https://query1.finance.yahoo.com/v7/finance/options/{ticker}"
-    # logger.info(f"Calling fetch_from_url for {stock_url}")
+    stock_url = f"https://query1.finance.yahoo.com/v7/finance/options/{ticker}"
+    logger.info(f"Calling fetch_from_url for {stock_url}")
     # result = await fetch_from_url(stock_url,"json")
     # price = result.data["optionChain"]["result"][0]["quote"]["regularMarketPrice"]
     price = randint(132, 148)
@@ -48,7 +48,7 @@ def init_csv_file(file_path):
 
 
 # Writes new stock info to CSV
-async def update_csv_stock():
+def update_csv_stock():
     logger.info("Calling update_csv_stock")
     try:
         companies = [
@@ -79,7 +79,7 @@ async def update_csv_stock():
         for _ in range(num_updates):  # To get num_updates readings
             for company in companies:
                 ticker = lookup_ticker(company)
-                new_price = await get_stock_price(ticker)
+                new_price = get_stock_price(ticker) # await
                 time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Current time
                 new_record = {
                     "Company": company,
@@ -97,7 +97,7 @@ async def update_csv_stock():
             logger.info(f"Saving prices to {fp}")
 
             # Wait for update_interval seconds before the next reading
-            await asyncio.sleep(update_interval)
+            asyncio.sleep(update_interval)  #await
 
     except Exception as e:
         logger.error(f"ERROR in update_csv_stock: {e}")
