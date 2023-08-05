@@ -33,11 +33,9 @@ def lookup_ticker(company):
 # Takes ticker string and returns current stock price (asynchronous)
 async def get_stock_price(ticker: str):
     logger.info("Calling get_stock_price for {ticker}")
-    stock_url = f"https://query1.finance.yahoo.com/v7/finance/options/{ticker}"
-    logger.info(f"Calling fetch_from_url for {stock_url}")
-    result = await fetch_from_url(stock_url,"json")
-    logger.info(f"Data for {ticker}: {result.data}")
-    #stock = yf.Ticker(ticker)
+    # stock_url = f"https://query1.finance.yahoo.com/v7/finance/options/{ticker}"
+    # logger.info(f"Calling fetch_from_url for {stock_url}")
+    # result = await fetch_from_url(stock_url,"json")
     # price = result.data["optionChain"]["result"][0]["quote"]["regularMarketPrice"]
     price = randint(132, 148)
     return price
